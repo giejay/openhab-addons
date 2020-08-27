@@ -72,7 +72,7 @@ import com.google.gson.JsonObject;
 public class MiIoVacuumHandler extends MiIoAbstractHandler {
     private final Logger logger = LoggerFactory.getLogger(MiIoVacuumHandler.class);
     private static final float MAP_SCALE = 2.0f;
-    private static final SimpleDateFormat DATEFORMATTER = new SimpleDateFormat("yyyyMMdd-HHss");
+    private static final SimpleDateFormat DATEFORMATTER = new SimpleDateFormat("yyyyMMdd-HHmmss");
     private static final String MAP_PATH = ConfigConstants.getUserDataFolder() + File.separator + BINDING_ID
             + File.separator;
     private final ChannelUID mapChannelUid;
@@ -168,9 +168,15 @@ public class MiIoVacuumHandler extends MiIoAbstractHandler {
             if (command instanceof OnOffType) {
                 if (command.equals(OnOffType.ON)) {
                     sendCommand(MiIoCommand.START_VACUUM);
+                    forceStatusUpdate();
+                    return;
                 } else {
                     sendCommand(MiIoCommand.STOP_VACUUM);
-                    sendCommand(MiIoCommand.CHARGE);
+                    scheduler.schedule(() -> {
+                        sendCommand(MiIoCommand.CHARGE);
+                        forceStatusUpdate();
+                    }, 2000, TimeUnit.MILLISECONDS);
+                    return;
                 }
             }
         }
@@ -183,7 +189,11 @@ public class MiIoVacuumHandler extends MiIoAbstractHandler {
                 sendCommand(MiIoCommand.PAUSE);
             } else if (command.toString().equals("dock")) {
                 sendCommand(MiIoCommand.STOP_VACUUM);
-                sendCommand(MiIoCommand.CHARGE);
+                scheduler.schedule(() -> {
+                    sendCommand(MiIoCommand.CHARGE);
+                    forceStatusUpdate();
+                }, 2000, TimeUnit.MILLISECONDS);
+                return;
             } else {
                 logger.info("Command {} not recognised", command.toString());
             }

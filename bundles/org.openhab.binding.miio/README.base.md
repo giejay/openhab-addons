@@ -71,6 +71,10 @@ However, for devices that are unsupported, you may override the value and try to
 
 `Thing miio:basic:light "My Light" [ host="192.168.x.x", token="put here your token", deviceId="0326xxxx" ]` 
 
+or in case of unknown models include the model information e.g.:
+
+`Thing miio:vacuum:s50 "vacuum" @ "livingroom" [ host="192.168.15.20", token="xxxxxxx", deviceId=“0470DDAA”, model="roborock.vacuum.s5" ]`
+
 ## Mi IO Devices
 
 !!!devices
@@ -83,7 +87,7 @@ The binding allows to try/test if your new device is working with database files
 For this, first remove your unsupported thing. Manually add a miio:basic thing. 
 Besides the regular configuration (like ip address, token) the modelId needs to be provided.
 Normally the modelId is populated with the model of your device, however in this case, use the modelId of a similar device.
-Look at the openhab forum, or the openhab github repository for the modelId of similar devices.
+Look at the openHAB forum, or the openHAB GitHub repository for the modelId of similar devices.
 
 # Advanced: adding local database files to support new devices
 
@@ -91,7 +95,7 @@ Things using the basic handler (miio:basic things) are driven by json 'database'
 This instructs the binding which channels to create, which properties and actions are associated with the channels etc.
 The conf/misc/miio (e.g. in Linux `/opt/openhab2/conf/misc/miio/`) is scanned for database files and will be used for your devices. 
 Note that local database files take preference over build-in ones, hence if a json file is local and in the database the local file will be used. 
-For format, please check the current database files in Openhab github.
+For format, please check the current database files in openHAB GitHub.
 
 ## Channels
 

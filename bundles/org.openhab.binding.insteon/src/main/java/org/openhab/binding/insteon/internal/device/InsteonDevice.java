@@ -74,6 +74,7 @@ public class InsteonDevice {
     private boolean hasModemDBEntry = false;
     private DeviceStatus status = DeviceStatus.INITIALIZED;
     private Map<Integer, @Nullable GroupMessageStateMachine> groupState = new HashMap<>();
+    private Map<String, @Nullable Object> deviceConfigMap = new HashMap<String, @Nullable Object>();
 
     /**
      * Constructor
@@ -191,7 +192,15 @@ public class InsteonDevice {
         synchronized (mrequestQueue) {
             featureQueried = f;
         }
-    };
+    }
+
+    public void setDeviceConfigMap(Map<String, @Nullable Object> deviceConfigMap) {
+        this.deviceConfigMap = deviceConfigMap;
+    }
+
+    public Map<String, @Nullable Object> getDeviceConfigMap() {
+        return deviceConfigMap;
+    }
 
     public @Nullable DeviceFeature getFeatureQueried() {
         synchronized (mrequestQueue) {
@@ -552,9 +561,10 @@ public class InsteonDevice {
      *
      * @param group the insteon group of the broadcast message
      * @param a the type of group message came in (action etc)
+     * @param cmd1 cmd1 from the message received
      * @return true if this is message is NOT a duplicate
      */
-    public boolean getGroupState(int group, GroupMessage a) {
+    public boolean getGroupState(int group, GroupMessage a, byte cmd1) {
         GroupMessageStateMachine m = groupState.get(group);
         if (m == null) {
             m = new GroupMessageStateMachine();
@@ -568,7 +578,7 @@ public class InsteonDevice {
         }
 
         logger.trace("{} updating group {} state to {}", address, group, a);
-        return (m.action(a, address, group));
+        return (m.action(a, address, group, cmd1));
     }
 
     @Override
