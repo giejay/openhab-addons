@@ -13,4 +13,14 @@
 
   <name>openHAB Add-ons :: Bundles :: Zigbee2Mqtt Binding</name>
 
+<!--  <dependencies>-->
+<!--    &lt;!&ndash; https://mvnrepository.com/artifact/guru.nidi/graphviz-java &ndash;&gt;-->
+<!--    <dependency>-->
+<!--      <groupId>guru.nidi</groupId>-->
+<!--      <artifactId>graphviz-java</artifactId>-->
+<!--      <version>0.17.0</version>-->
+<!--      <scope>provided</scope>-->
+<!--    </dependency>-->
+
+<!--  </dependencies>-->
 </project>

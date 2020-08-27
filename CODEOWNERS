@@ -19,7 +19,7 @@
 /bundles/org.openhab.binding.avmfritz/ @cweitkamp
 /bundles/org.openhab.binding.bigassfan/ @mhilbush
 /bundles/org.openhab.binding.bluetooth/ @cdjackson @kaikreuzer
-/bundles/org.openhab.binding.bluetooth.airthings/ @paulianttila 
+/bundles/org.openhab.binding.bluetooth.airthings/ @paulianttila
 /bundles/org.openhab.binding.bluetooth.am43/ @cpmeister
 /bundles/org.openhab.binding.bluetooth.bluegiga/ @cdjackson @kaikreuzer
 /bundles/org.openhab.binding.bluetooth.bluez/ @cdjackson @kaikreuzer
@@ -237,6 +237,7 @@
 /bundles/org.openhab.binding.xmppclient/ @pavel-gololobov
 /bundles/org.openhab.binding.yamahareceiver/ @davidgraeff @zarusz
 /bundles/org.openhab.binding.yeelight/ @claell
+/bundles/org.openhab.binding.zigbee2mqtt/ @giejay
 /bundles/org.openhab.binding.zoneminder/ @Mr-Eskildsen
 /bundles/org.openhab.binding.zway/ @pathec
 /bundles/org.openhab.extensionservice.marketplace/ @kaikreuzer

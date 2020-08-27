@@ -14,10 +14,19 @@ package org.openhab.binding.zigbee2mqtt.internal;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+//import guru.nidi.graphviz.attribute.validate.ValidatorEngine;
+//import guru.nidi.graphviz.attribute.validate.ValidatorFormat;
+//import guru.nidi.graphviz.engine.Format;
+//import guru.nidi.graphviz.engine.Graphviz;
+//import guru.nidi.graphviz.model.MutableGraph;
+//import guru.nidi.graphviz.parse.Parser;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.library.types.RawType;
 import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.*;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
@@ -32,6 +41,11 @@ import org.openhab.binding.zigbee2mqtt.internal.mqtt.Zigbee2MqttTopicHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +67,8 @@ public class Zigbee2MqttBridgeHandler extends BaseBridgeHandler
     private final Logger logger = LoggerFactory.getLogger(Zigbee2MqttBridgeHandler.class);
 
     private MqttBrokerConnection mqttBrokerConnection;
+
+//    private Parser parser = new Parser().forEngine(ValidatorEngine.DOT).forFormat(ValidatorFormat.MAP);
 
     @Nullable
     private Zigbee2MqttDiscoveryService discoveryService;
@@ -161,6 +177,7 @@ public class Zigbee2MqttBridgeHandler extends BaseBridgeHandler
         if (command instanceof RefreshType) {
             switch (channelUID.getId()) {
                 case CHANNEL_NAME_NETWORKMAP:
+                  logger.info("Publishing to get new map");
                     publish(topicHandler.getTopicBridgeNetworkmap(), "graphviz");
                     return;
 
@@ -308,27 +325,23 @@ public class Zigbee2MqttBridgeHandler extends BaseBridgeHandler
      * @throws IOException
      */
     private void handleActionNetworkmap(String message) {
+       try {
+         logger.info("Getting network map " + message);
 
-//        try {
+           FileUtils.writeStringToFile(new File("/tmp/graph.dot"), message);
+           Runtime.getRuntime().exec("/usr/bin/dot /tmp/graph.dot  -Tpng -o /openhab/conf/html/graph.png");
+//           final byte[] bytes = IOUtils.toByteArray(new FileReader("/openhab/conf/html/graph.png"));
 
-           /* MutableGraph g = Parser.read(message);
-            BufferedImage bi = Graphviz.fromGraph(g).render(Format.PNG).toImage();
+//            Channel channelImage = getThing().getChannel(CHANNEL_NAME_NETWORKMAP);
+//            if (channelImage != null) {
+//              logger.info("Writing channel map");
+//                updateState(channelImage.getUID(), new RawType(bytes, "image/png"));
+//            }
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(bi, "png", baos);
-            baos.flush();
-            byte[] imageInByte = baos.toByteArray();
-            baos.close();
+        } catch (IOException e) {
 
-            Channel channelImage = getThing().getChannel(CHANNEL_NAME_NETWORKMAP);
-            if (channelImage != null) {
-                updateState(channelImage.getUID(), new RawType(imageInByte, "image/png"));
-            }*/
-
-//        } catch (IOException e) {
-//
-//            logger.error("error while rendering networkmap: {}", e.getMessage());
-//        }
+            logger.error("error while rendering networkmap: {}", e.getMessage());
+        }
     }
 
     /**
