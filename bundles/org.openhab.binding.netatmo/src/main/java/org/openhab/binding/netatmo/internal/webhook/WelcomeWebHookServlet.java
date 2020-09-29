@@ -90,7 +90,7 @@ public class WelcomeWebHookServlet extends HttpServlet {
         NetatmoBridgeHandler handler = bridgeHandler;
         if (!data.isEmpty() && handler != null) {
             NAWebhookCameraEvent event = gson.fromJson(data, NAWebhookCameraEvent.class);
-            logger.debug("Event transmitted from restService");
+            logger.debug("Event transmitted from restService, {}", data);
             handler.webHookEvent(event);
         }
 
