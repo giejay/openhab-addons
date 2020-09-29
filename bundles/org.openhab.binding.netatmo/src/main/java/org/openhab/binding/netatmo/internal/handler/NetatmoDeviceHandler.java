@@ -67,7 +67,7 @@ public abstract class NetatmoDeviceHandler<DEVICE> extends AbstractNetatmoThingH
     protected void initializeThing() {
         defineRefreshInterval();
         updateStatus(ThingStatus.ONLINE);
-        scheduleRefreshJob();
+//        scheduleRefreshJob();
     }
 
     private void scheduleRefreshJob() {

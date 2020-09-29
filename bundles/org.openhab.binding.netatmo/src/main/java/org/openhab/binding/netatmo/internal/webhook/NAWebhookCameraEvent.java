@@ -111,7 +111,10 @@ public class NAWebhookCameraEvent {
         TAG_UNINSTALLED("tag_uninstalled"),
 
         @SerializedName("tag_open")
-        TAG_OPEN("tag_open");
+        TAG_OPEN("tag_open"),
+
+        @SerializedName("human")
+        HUMAN("human"),;
 
         private String value;
 
@@ -152,4 +155,9 @@ public class NAWebhookCameraEvent {
     public List<NAWebhookCameraEventPerson> getPersons() {
         return persons;
     }
+
+    @SerializedName("snapshot_url")
+    String snapshotUrl;
+
+    public String getSnapshotUrl(){ return snapshotUrl;}
 }

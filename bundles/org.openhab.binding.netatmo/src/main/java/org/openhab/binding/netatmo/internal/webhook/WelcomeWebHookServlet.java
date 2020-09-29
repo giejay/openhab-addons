@@ -80,7 +80,7 @@ public class WelcomeWebHookServlet extends HttpServlet {
         String data = inputStreamToString(req);
         if (data != null && bridgeHandler != null) {
             NAWebhookCameraEvent event = gson.fromJson(data, NAWebhookCameraEvent.class);
-            logger.debug("Event transmitted from restService");
+            logger.debug("Event transmitted from restService, {}", data);
             bridgeHandler.webHookEvent(event);
         }
 

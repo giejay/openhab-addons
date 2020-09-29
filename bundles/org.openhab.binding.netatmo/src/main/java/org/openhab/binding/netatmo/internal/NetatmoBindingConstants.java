@@ -301,5 +301,5 @@ public class NetatmoBindingConstants {
     public static final Set<EventTypeEnum> PERSON_EVENTS = Stream.of(EventTypeEnum.PERSON, EventTypeEnum.PERSON_AWAY)
             .collect(Collectors.toSet());
     public static final Set<EventTypeEnum> PRESENCE_EVENTS = Stream
-            .of(EventTypeEnum.OUTDOOR, EventTypeEnum.ALIM, EventTypeEnum.DAILY_SUMMARY).collect(Collectors.toSet());
+            .of(EventTypeEnum.OUTDOOR, EventTypeEnum.ALIM, EventTypeEnum.DAILY_SUMMARY, EventTypeEnum.HUMAN).collect(Collectors.toSet());
 }

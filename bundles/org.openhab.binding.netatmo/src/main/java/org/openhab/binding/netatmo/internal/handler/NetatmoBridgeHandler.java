@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2010-2020 Contributors to the openHAB project
- *
+ * <p>
  * See the NOTICE file(s) distributed with this work for additional
  * information.
- *
+ * <p>
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0
- *
+ * <p>
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.netatmo.internal.handler;
@@ -26,9 +26,11 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -71,7 +73,6 @@ import retrofit.RetrofitError.Kind;
  *
  * @author Gaël L'hopital - Initial contribution OH2 version
  * @author Rob Nielsen - Added day, week, and month measurements to the weather station and modules
- *
  */
 public class NetatmoBridgeHandler extends BaseBridgeHandler {
     private Logger logger = LoggerFactory.getLogger(NetatmoBridgeHandler.class);
@@ -270,7 +271,7 @@ public class NetatmoBridgeHandler extends BaseBridgeHandler {
         List<NAMeasureBodyElem> data = getStationApi()
                 .getmeasure(equipmentId, scale, new CSVParams(types), moduleId, null, "last", 1, true, false).getBody();
         updateStatus(ThingStatus.ONLINE);
-        NAMeasureBodyElem element = data.get(0);
+        NAMeasureBodyElem element = (data != null && data.size() > 0) ? data.get(0) : null;
         return element != null ? element.getValue().get(0) : Collections.emptyList();
     }
 
@@ -315,13 +316,15 @@ public class NetatmoBridgeHandler extends BaseBridgeHandler {
     }
 
     public void webHookEvent(NAWebhookCameraEvent event) {
+        logger.info("received event: {}, {}, {}", new Object[]{Optional.ofNullable(event.getEventType()).map(NAWebhookCameraEvent.EventTypeEnum::toString).orElse("unknown"), event.getCameraId(), Optional.ofNullable(event.getAppType()).map(NAWebhookCameraEvent.AppTypeEnum::toString).orElse("Unknown")});
         // This currently the only known event type but I suspect usage can grow in the future...
-        if (event.getAppType() == NAWebhookCameraEvent.AppTypeEnum.CAMERA) {
+        if (event.getAppType() == NAWebhookCameraEvent.AppTypeEnum.CAMERA || StringUtils.isNotBlank(event.getCameraId())) {
             Set<AbstractNetatmoThingHandler> modules = new HashSet<>();
             if (WELCOME_EVENTS.contains(event.getEventType()) || PRESENCE_EVENTS.contains(event.getEventType())) {
                 String cameraId = event.getCameraId();
                 if (cameraId != null) {
                     Optional<AbstractNetatmoThingHandler> camera = findNAThing(cameraId);
+                    logger.info("Searched camera: {}", camera.map(AbstractNetatmoThingHandler::getId).orElse("not found"));
                     camera.ifPresent(modules::add);
                 }
             }
@@ -344,9 +347,16 @@ public class NetatmoBridgeHandler extends BaseBridgeHandler {
             }
             modules.forEach(module -> {
                 Channel channel = module.getThing().getChannel(CHANNEL_WELCOME_HOME_EVENT);
+                logger.info("Channel found: {}", channel);
                 if (channel != null) {
                     triggerChannel(channel.getUID(), event.getEventType().toString());
                 }
+
+                Optional.ofNullable(module.getThing().getChannel(CHANNEL_CAMERA_LIVEPICTURE_URL)).ifPresent(c -> {
+                    logger.info("Updating the live picture url of the camera");
+                    updateState(c.getUID(), new StringType(event.getSnapshotUrl()));
+                });
+
             });
         }
     }
