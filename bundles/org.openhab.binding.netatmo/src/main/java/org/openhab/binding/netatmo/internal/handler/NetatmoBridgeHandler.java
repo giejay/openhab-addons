@@ -214,6 +214,9 @@ public class NetatmoBridgeHandler extends BaseBridgeHandler {
         if (configuration.readPresence) {
             scopes.add("read_presence");
             scopes.add("access_presence");
+            scopes.add("write_doorbell");
+            scopes.add("access_doorbell");
+            scopes.add("read_doorbell");
         }
 
         return String.join(" ", scopes);
