@@ -341,7 +341,7 @@ public class NetatmoBridgeHandler extends BaseBridgeHandler {
     public void webHookEvent(NAWebhookCameraEvent event) {
         logger.info("received event: {}, {}, {}", new Object[]{Optional.ofNullable(event.getEventType()).map(NAWebhookCameraEvent.EventTypeEnum::toString).orElse("unknown"), event.getCameraId(), Optional.ofNullable(event.getAppType()).map(NAWebhookCameraEvent.AppTypeEnum::toString).orElse("Unknown")});
         // This currently the only known event type but I suspect usage can grow in the future...
-        if (event.getAppType() == NAWebhookCameraEvent.AppTypeEnum.CAMERA || StringUtils.isNotBlank(event.getCameraId())) {
+        if (event.getAppType() == NAWebhookCameraEvent.AppTypeEnum.CAMERA || StringUtils.isNotBlank(event.getCameraId()) || StringUtils.isNotBlank(event.getHomeId())) {
             Set<AbstractNetatmoThingHandler> modules = new HashSet<>();
             if (WELCOME_EVENTS.contains(event.getEventType()) || PRESENCE_EVENTS.contains(event.getEventType())) {
                 String cameraId = event.getCameraId();
@@ -351,7 +351,7 @@ public class NetatmoBridgeHandler extends BaseBridgeHandler {
                     camera.ifPresent(modules::add);
                 }
             }
-            if (HOME_EVENTS.contains(event.getEventType())) {
+            if (HOME_EVENTS.contains(event.getEventType()) || StringUtils.contains(event.getMessage(), "Incoming call")) {
                 String homeId = event.getHomeId();
                 if (homeId != null) {
                     Optional<AbstractNetatmoThingHandler> home = findNAThing(homeId);
@@ -372,7 +372,11 @@ public class NetatmoBridgeHandler extends BaseBridgeHandler {
                 Channel channel = module.getThing().getChannel(CHANNEL_WELCOME_HOME_EVENT);
                 logger.info("Channel found: {}", channel);
                 if (channel != null) {
-                    triggerChannel(channel.getUID(), event.getEventType().toString());
+                    if(StringUtils.contains(event.getMessage(), "Incoming call")){
+                        triggerChannel(channel.getUID(), NAWebhookCameraEvent.EventTypeEnum.INCOMING_CALL.toString());
+                    } else {
+                        triggerChannel(channel.getUID(), event.getEventType().toString());
+                    }
                 }
 
                 Optional.ofNullable(module.getThing().getChannel(CHANNEL_CAMERA_LIVEPICTURE_URL)).ifPresent(c -> {
