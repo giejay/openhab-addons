@@ -287,7 +287,7 @@ public class NetatmoBindingConstants {
             .concat(SUPPORTED_DEVICE_THING_TYPES_UIDS.stream(), Stream.of(APIBRIDGE_THING_TYPE))
             .collect(Collectors.toSet());
 
-    public static final Set<EventTypeEnum> HOME_EVENTS = Stream.of(EventTypeEnum.PERSON_AWAY)
+    public static final Set<EventTypeEnum> HOME_EVENTS = Stream.of(EventTypeEnum.PERSON_AWAY, EventTypeEnum.INCOMING_CALL)
             .collect(Collectors.toSet());
     public static final Set<EventTypeEnum> WELCOME_EVENTS = Stream
             .of(EventTypeEnum.PERSON, EventTypeEnum.MOVEMENT, EventTypeEnum.CONNECTION, EventTypeEnum.DISCONNECTION,
@@ -299,5 +299,5 @@ public class NetatmoBindingConstants {
     public static final Set<EventTypeEnum> PERSON_EVENTS = Stream.of(EventTypeEnum.PERSON, EventTypeEnum.PERSON_AWAY)
             .collect(Collectors.toSet());
     public static final Set<EventTypeEnum> PRESENCE_EVENTS = Stream
-            .of(EventTypeEnum.OUTDOOR, EventTypeEnum.ALIM, EventTypeEnum.DAILY_SUMMARY).collect(Collectors.toSet());
+        .of(EventTypeEnum.OUTDOOR, EventTypeEnum.ALIM, EventTypeEnum.DAILY_SUMMARY, EventTypeEnum.HUMAN).collect(Collectors.toSet());
 }

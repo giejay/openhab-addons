@@ -507,27 +507,27 @@ Import-Package: \\
           </configuration>
         </plugin>
 
-        <plugin>
-          <groupId>org.openhab.tools.sat</groupId>
-          <artifactId>sat-plugin</artifactId>
-          <version>${sat.version}</version>
-          <configuration>
-            <checkstyleProperties>${basedirRoot}/tools/static-code-analysis/checkstyle/ruleset.properties</checkstyleProperties>
-            <checkstyleFilter>${basedirRoot}/tools/static-code-analysis/checkstyle/suppressions.xml</checkstyleFilter>
-          </configuration>
-          <executions>
-            <execution>
-              <id>sat-all</id>
-              <goals>
-                <goal>checkstyle</goal>
-                <goal>pmd</goal>
-                <goal>spotbugs</goal>
-                <goal>report</goal>
-              </goals>
-              <phase>verify</phase>
-            </execution>
-          </executions>
-        </plugin>
+<!--        <plugin>-->
+<!--          <groupId>org.openhab.tools.sat</groupId>-->
+<!--          <artifactId>sat-plugin</artifactId>-->
+<!--          <version>${sat.version}</version>-->
+<!--          <configuration>-->
+<!--            <checkstyleProperties>${basedirRoot}/tools/static-code-analysis/checkstyle/ruleset.properties</checkstyleProperties>-->
+<!--            <checkstyleFilter>${basedirRoot}/tools/static-code-analysis/checkstyle/suppressions.xml</checkstyleFilter>-->
+<!--          </configuration>-->
+<!--          <executions>-->
+<!--            <execution>-->
+<!--              <id>sat-all</id>-->
+<!--              <goals>-->
+<!--                <goal>checkstyle</goal>-->
+<!--                <goal>pmd</goal>-->
+<!--                <goal>spotbugs</goal>-->
+<!--                <goal>report</goal>-->
+<!--              </goals>-->
+<!--              <phase>verify</phase>-->
+<!--            </execution>-->
+<!--          </executions>-->
+<!--        </plugin>-->
         <plugin>
           <groupId>com.diffplug.spotless</groupId>
           <artifactId>spotless-maven-plugin</artifactId>
@@ -644,29 +644,11 @@ Import-Package: \\
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>enforce-java</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireJavaVersion>
-                  <version>[11.0,12.0)</version>
-                </requireJavaVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>com.diffplug.spotless</groupId>
-        <artifactId>spotless-maven-plugin</artifactId>
-      </plugin>
+
+<!--      <plugin>-->
+<!--        <groupId>com.diffplug.spotless</groupId>-->
+<!--        <artifactId>spotless-maven-plugin</artifactId>-->
+<!--      </plugin>-->
     </plugins>
     <extensions>
       <extension>

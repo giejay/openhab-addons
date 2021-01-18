@@ -28,6 +28,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -41,6 +42,7 @@ import org.openhab.binding.netatmo.internal.config.NetatmoBridgeConfiguration;
 import org.openhab.binding.netatmo.internal.webhook.NAWebhookCameraEvent;
 import org.openhab.binding.netatmo.internal.webhook.NAWebhookCameraEventPerson;
 import org.openhab.binding.netatmo.internal.webhook.WelcomeWebHookServlet;
+import org.openhab.core.library.types.StringType;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
@@ -237,6 +239,9 @@ public class NetatmoBridgeHandler extends BaseBridgeHandler {
         if (configuration.readPresence) {
             scopes.add("read_presence");
             scopes.add("access_presence");
+            scopes.add("write_doorbell");
+            scopes.add("access_doorbell");
+            scopes.add("read_doorbell");
         }
 
         return String.join(" ", scopes);
@@ -346,8 +351,9 @@ public class NetatmoBridgeHandler extends BaseBridgeHandler {
     }
 
     public void webHookEvent(NAWebhookCameraEvent event) {
+        logger.info("Received event in handler: {}", event);
         // This currently the only known event type but I suspect usage can grow in the future...
-        if (event.getAppType() == NAWebhookCameraEvent.AppTypeEnum.CAMERA) {
+        if (event.getAppType() == NAWebhookCameraEvent.AppTypeEnum.CAMERA || StringUtils.isNotBlank(event.getCameraId()) || StringUtils.isNotBlank(event.getHomeId())) {
             Set<AbstractNetatmoThingHandler> modules = new HashSet<>();
             if (WELCOME_EVENTS.contains(event.getEventType()) || PRESENCE_EVENTS.contains(event.getEventType())) {
                 String cameraId = event.getCameraId();
@@ -375,8 +381,21 @@ public class NetatmoBridgeHandler extends BaseBridgeHandler {
             }
             modules.forEach(module -> {
                 Channel channel = module.getThing().getChannel(CHANNEL_WELCOME_HOME_EVENT);
+                logger.info("Retrieved message: " + event.getEventType());
                 if (channel != null) {
                     triggerChannel(channel.getUID(), event.getEventType().toString());
+                }
+
+                if(StringUtils.isNotBlank(event.getSnapshotUrl())) {
+                    Optional.ofNullable(module.getThing().getChannel(CHANNEL_CAMERA_LIVEPICTURE_URL)).ifPresent(c -> {
+                        logger.info("Updating the live picture url of the camera");
+                        updateState(c.getUID(), new StringType(event.getSnapshotUrl()));
+                    });
+
+                    Optional.ofNullable(module.getThing().getChannel(CHANNEL_WELCOME_EVENT_SNAPSHOT_URL)).ifPresent(c -> {
+                        logger.info("Updating the live picture url of the welcome");
+                        updateState(c.getUID(), new StringType(event.getSnapshotUrl()));
+                    });
                 }
             });
         }

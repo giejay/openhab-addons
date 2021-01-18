@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2010-2020 Contributors to the openHAB project
- *
+ * <p>
  * See the NOTICE file(s) distributed with this work for additional
  * information.
- *
+ * <p>
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0
- *
+ * <p>
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.netatmo.internal.webhook;
@@ -111,7 +111,13 @@ public class NAWebhookCameraEvent {
         TAG_UNINSTALLED("tag_uninstalled"),
 
         @SerializedName("tag_open")
-        TAG_OPEN("tag_open");
+        TAG_OPEN("tag_open"),
+
+        @SerializedName("human")
+        HUMAN("human"),
+
+        @SerializedName("incoming_call")
+        INCOMING_CALL("incoming_call");
 
         private String value;
 
@@ -152,4 +158,20 @@ public class NAWebhookCameraEvent {
     public List<NAWebhookCameraEventPerson> getPersons() {
         return persons;
     }
+
+    @SerializedName("snapshot_url")
+    String snapshotUrl;
+
+    public String getSnapshotUrl() {
+        return snapshotUrl;
+    }
+
+    @SerializedName("message")
+    String message;
+
+    public String getMessage() {
+        return message;
+    }
+
+
 }
